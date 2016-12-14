@@ -7,33 +7,20 @@
     <com.google.android.gms.maps.MapView
         android:id="@+id/scaled_map"
         android:layout_width="match_parent"
-        android:layout_height="150dp">
+        android:layout_height="180dp">
 
     </com.google.android.gms.maps.MapView>
-    <TextView
-        android:id="@+id/test_lat"
-        android:layout_below="@id/scaled_map"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment" />
-    <TextView
-        android:id="@+id/test_long"
-        android:layout_toRightOf="@id/test_lat"
-        android:layout_below="@id/scaled_map"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment" />
-    <!--
+
     <GridView
         android:id="@+id/gridview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/test_lat"
+        android:layout_below="@id/scaled_map"
         android:columnWidth="90dp"
         android:numColumns="auto_fit"
         android:verticalSpacing="0dp"
         android:horizontalSpacing="0dp"
         android:stretchMode="columnWidth" />
-    -->
+
 
 </RelativeLayout>

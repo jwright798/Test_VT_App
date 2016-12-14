@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -17,6 +18,9 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.udacity.jeremywright.virtualtraveler.adapter.PhotoGridAdapter;
+
+import java.util.ArrayList;
 
 
 /**
@@ -37,6 +41,8 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback {
 
     private double latitude;
     private double longitude;
+
+    PhotoGridAdapter adapter;
 
     public PhotosFragment() {
         // Required empty public constructor
@@ -82,11 +88,15 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback {
         // Inflate the layout for this fragment
         final View photoView =  inflater.inflate(R.layout.fragment_photos, container, false);
 
-        TextView latTextView = (TextView)photoView.findViewById(R.id.test_lat);
-        latTextView.setText(Double.toString(latitude));
+        ArrayList<String> testList = new ArrayList<>();
+        for (int i = 0; i<40; i++){
+            testList.add("test");
+        }
 
-        TextView longTestView = (TextView)photoView.findViewById(R.id.test_long);
-        longTestView.setText(Double.toString(longitude));
+        adapter = new PhotoGridAdapter(getActivity(), testList);
+
+        GridView gridView = (GridView)photoView.findViewById(R.id.gridview);
+        gridView.setAdapter(adapter);
 
         return photoView;
     }
