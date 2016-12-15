@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -71,6 +72,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //Add a new marker
                 //TODO: add marker to Db
                 mMap.addMarker(new MarkerOptions().position(latLng).draggable(true));
+                Toast.makeText(MapsActivity.this, "Pin added", Toast.LENGTH_SHORT);
             }
         });
 

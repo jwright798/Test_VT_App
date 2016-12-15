@@ -19,6 +19,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.udacity.jeremywright.virtualtraveler.adapter.PhotoGridAdapter;
+import com.udacity.jeremywright.virtualtraveler.dataobjects.PhotoDO;
 
 import java.util.ArrayList;
 
@@ -31,7 +32,7 @@ import java.util.ArrayList;
  * Use the {@link PhotosFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PhotosFragment extends Fragment implements OnMapReadyCallback {
+public class PhotosFragment extends Fragment implements OnMapReadyCallback, PhotoServiceHelper.PhotoServiceDelegate {
 
     private static final String ARG_LAT = "latitude";
     private static final String ARG_LONG = "longitude";
@@ -41,6 +42,10 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback {
 
     private double latitude;
     private double longitude;
+
+    private PhotoServiceHelper serviceHelper = new PhotoServiceHelper();
+    private ArrayList<PhotoDO> photoList;
+
 
     PhotoGridAdapter adapter;
 
@@ -68,6 +73,7 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        serviceHelper.setPhotoServiceDelegate(this);
 
     }
 
@@ -88,15 +94,24 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback {
         // Inflate the layout for this fragment
         final View photoView =  inflater.inflate(R.layout.fragment_photos, container, false);
 
-        ArrayList<String> testList = new ArrayList<>();
-        for (int i = 0; i<40; i++){
-            testList.add("test");
-        }
 
-        adapter = new PhotoGridAdapter(getActivity(), testList);
+
+        photoList = new ArrayList<PhotoDO>();
+
+        adapter = new PhotoGridAdapter(getActivity(), photoList);
 
         GridView gridView = (GridView)photoView.findViewById(R.id.gridview);
         gridView.setAdapter(adapter);
+
+        if (savedInstanceState == null) {
+            serviceHelper.getPhotos(latitude, longitude);
+        } else {
+            adapter.clear();
+            photoList = savedInstanceState.getParcelableArrayList("photoList");
+            adapter.addAll(photoList);
+            adapter.notifyDataSetChanged();
+        }
+        serviceHelper.getPhotos(latitude, longitude);
 
         return photoView;
     }
@@ -107,6 +122,10 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
         mapView = (MapView) view.findViewById(R.id.scaled_map);
+        if (savedInstanceState != null) {
+            //removing this before the mapView onCreate gets called
+            savedInstanceState.remove("photoList");
+        }
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
         mapView.getMapAsync(this);
@@ -122,9 +141,20 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
+    public void photosResponse(ArrayList<PhotoDO> photos) {
+        if (photos != null){
+            adapter.clear();
+            adapter.addAll(photos);
+            photoList=photos;
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putDouble("longitude", longitude);
         outState.putDouble("latitude", latitude);
+        outState.putParcelableArrayList("photoList", photoList);
     }
 }
