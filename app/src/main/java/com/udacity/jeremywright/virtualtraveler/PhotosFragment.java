@@ -98,17 +98,9 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Phot
         final View photoView =  inflater.inflate(R.layout.fragment_photos, container, false);
 
 
-        fab = (FloatingActionButton)photoView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO: present favorites view
-                Toast.makeText(getContext(),"FAB pressed", Toast.LENGTH_SHORT).show();
-            }
-        });
         photoList = new ArrayList<PhotoDO>();
 
-        adapter = new PhotoGridAdapter(getActivity(), photoList);
+        adapter = new PhotoGridAdapter(getActivity(), photoList, false);
 
         GridView gridView = (GridView)photoView.findViewById(R.id.gridview);
         gridView.setAdapter(adapter);
@@ -121,7 +113,7 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Phot
             adapter.addAll(photoList);
             adapter.notifyDataSetChanged();
         }
-        serviceHelper.getPhotos(latitude, longitude);
+        //serviceHelper.getPhotos(latitude, longitude);
 
         return photoView;
     }

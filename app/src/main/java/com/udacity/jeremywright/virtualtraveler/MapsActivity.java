@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,6 +25,7 @@ import com.udacity.jeremywright.virtualtraveler.contentprovider.LocationsContent
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+        fab = (FloatingActionButton) findViewById(R.id.map_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapsActivity.this, FavoritesActivity.class);
+                startActivity(intent);
+            }
+        });
         mapFragment.getMapAsync(this);
     }
 
@@ -148,6 +159,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void deleteRecord(String id){
 
         int result = getContentResolver().delete(LocationsContentProvider.CONTENT_URI, "_id=?", new String[]{id});
+        if (result == 0){
+            Log.e("VT", "error deleting location");
+        }
     }
 
 

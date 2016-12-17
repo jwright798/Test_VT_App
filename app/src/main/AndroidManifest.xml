@@ -39,6 +39,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".PhotosActivity" />
+        <activity android:name=".FavoritesActivity" />
 
         <provider android:name=".contentprovider.LocationsContentProvider"
             android:authorities="com.udacity.jeremywright.virtualtraveler.contentprovider.LocationsContentProvider"/>

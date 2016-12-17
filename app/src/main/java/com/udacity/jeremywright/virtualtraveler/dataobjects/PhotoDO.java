@@ -20,6 +20,7 @@ public class PhotoDO implements Parcelable {
     private int ispublic;
     private int isfriend;
     private int isfamily;
+    private String url;
 
 
 
@@ -33,6 +34,11 @@ public class PhotoDO implements Parcelable {
         this.ispublic = in.readInt();
         this.isfriend = in.readInt();
         this.isfamily = in.readInt();
+        this.url = in.readString();
+    }
+
+    public PhotoDO(String url) {
+        this.url = url;
     }
 
     public PhotoDO(JSONObject object) throws JSONException {
@@ -45,6 +51,7 @@ public class PhotoDO implements Parcelable {
         this.ispublic = object.getInt("ispublic");
         this.isfriend = object.getInt("isfriend");
         this.isfamily = object.getInt("isfamily");
+        this.url = getURL();
     }
 
     public PhotoDO(){
@@ -124,7 +131,15 @@ public class PhotoDO implements Parcelable {
     }
 
     public String getURL(){
-        return "https://farm"+Integer.toString(farm)+".staticflickr.com/"+server+"/"+id+"_"+secret+"_s.jpg";
+        if (url != null && !url.isEmpty()){
+            return url;
+        } else {
+            return "https://farm" + Integer.toString(farm) + ".staticflickr.com/" + server + "/" + id + "_" + secret + "_s.jpg";
+        }
+    }
+
+    public void setURL(String url){
+        this.url = url;
     }
 
     @Override

@@ -25,9 +25,10 @@ import java.util.List;
 
 public class PhotoGridAdapter extends ArrayAdapter<PhotoDO> {
 
-
-    public PhotoGridAdapter(Context context, List<PhotoDO> photoDOs) {
+    private boolean isFavorites;
+    public PhotoGridAdapter(Context context, List<PhotoDO> photoDOs, boolean isFavorites) {
         super(context, 0, photoDOs);
+        this.isFavorites = isFavorites;
     }
 
     @Override
@@ -59,8 +60,15 @@ public class PhotoGridAdapter extends ArrayAdapter<PhotoDO> {
             @Override
             public void onClick(View v) {
                 //Note: I was originally going to make this a double tap action, but that's against UI guidelines
-                createNewRecord(photo.getURL());
-                Toast.makeText(getContext(),"Added to favorites", Toast.LENGTH_SHORT).show();
+                if (!isFavorites){
+                    createNewRecord(photo.getURL());
+                    Toast.makeText(getContext(), "Added to favorites", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Removed from favorites", Toast.LENGTH_SHORT).show();
+                    remove(photo);
+                    removePhoto(photo);
+                    notifyDataSetChanged();
+                }
             }
         });
 
@@ -73,6 +81,14 @@ public class PhotoGridAdapter extends ArrayAdapter<PhotoDO> {
 
         Uri uri = getContext().getContentResolver().insert(
                 PhotosContentProvider.CONTENT_URI, values);
+    }
+
+    private void removePhoto (PhotoDO photoDO) {
+        String photoURL = photoDO.getURL();
+        int result = getContext().getContentResolver().delete(PhotosContentProvider.CONTENT_URI, "photoURL=?", new String[]{photoURL});
+        if (result == 0){
+            Log.e("VT", "error deleting photo");
+        }
     }
 
 }
