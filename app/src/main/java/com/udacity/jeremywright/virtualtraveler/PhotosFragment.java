@@ -2,12 +2,14 @@ package com.udacity.jeremywright.virtualtraveler;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.CameraUpdate;
@@ -39,6 +41,7 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Phot
 
     private MapView mapView;
     private GoogleMap map;
+    private FloatingActionButton fab;
 
     private double latitude;
     private double longitude;
@@ -95,7 +98,14 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Phot
         final View photoView =  inflater.inflate(R.layout.fragment_photos, container, false);
 
 
-
+        fab = (FloatingActionButton)photoView.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: present favorites view
+                Toast.makeText(getContext(),"FAB pressed", Toast.LENGTH_SHORT).show();
+            }
+        });
         photoList = new ArrayList<PhotoDO>();
 
         adapter = new PhotoGridAdapter(getActivity(), photoList);

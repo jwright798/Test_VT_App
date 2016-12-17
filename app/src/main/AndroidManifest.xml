@@ -38,7 +38,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PhotosActivity"></activity>
+        <activity android:name=".PhotosActivity" />
+
+        <provider android:name=".contentprovider.LocationsContentProvider"
+            android:authorities="com.udacity.jeremywright.virtualtraveler.contentprovider.LocationsContentProvider"/>
+        <provider android:name=".contentprovider.PhotosContentProvider"
+            android:authorities="com.udacity.jeremywright.virtualtraveler.contentprovider.PhotosContentProvider"/>
     </application>
 
 </manifest>

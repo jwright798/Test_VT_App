@@ -1,7 +1,10 @@
 package com.udacity.jeremywright.virtualtraveler;
 
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +18,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.udacity.jeremywright.virtualtraveler.contentprovider.LocationsContentProvider;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -43,11 +47,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        mMap.clear();
         // Add a marker in Sydney and move the camera
         LatLng sanAntonio = new LatLng(29.4241, -98.4931);
         mMap.addMarker(new MarkerOptions().position(sanAntonio).draggable(true));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sanAntonio,16.0f));
+
+        //insert map pins from ContentProvider
+        String URL = "content://com.udacity.jeremywright.virtualtraveler.contentprovider.LocationsContentProvider";
+        Uri locations = Uri.parse(URL);
+        Cursor c = managedQuery(locations, null, null, null, null);
+
+        if (c.moveToFirst()) {
+            do{
+                double testLat = Double.parseDouble(c.getString(c.getColumnIndex(LocationsContentProvider.LAT)));
+                double testLong = Double.parseDouble(c.getString(c.getColumnIndex(LocationsContentProvider.LONGITUDE)));
+                String tag = c.getString(c.getColumnIndex(LocationsContentProvider._ID));
+                LatLng marker = new LatLng(Double.parseDouble(c.getString(c.getColumnIndex(LocationsContentProvider.LAT))),
+                        Double.parseDouble(c.getString(c.getColumnIndex(LocationsContentProvider.LONGITUDE))));
+                mMap.addMarker(new MarkerOptions().position(marker).draggable(true).title(tag));
+            } while (c.moveToNext());
+        }
 
         //Disable Map Toolbar:
         mMap.getUiSettings().setMapToolbarEnabled(false);
@@ -56,6 +76,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public boolean onMarkerClick(Marker marker) {
                 //how to get indivitual marker info
+                marker.hideInfoWindow();
                 Log.i("VT","Latitude"+Double.toString(marker.getPosition().latitude));
                 Log.i("VT","Longitude"+Double.toString(marker.getPosition().longitude));
                 Intent intent = new Intent(MapsActivity.this, PhotosActivity.class);
@@ -70,15 +91,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onMapLongClick(LatLng latLng) {
                 //Add a new marker
-                //TODO: add marker to Db
                 mMap.addMarker(new MarkerOptions().position(latLng).draggable(true));
                 Toast.makeText(MapsActivity.this, "Pin added", Toast.LENGTH_SHORT);
+                createNewRecord(latLng.latitude, latLng.longitude);
             }
         });
 
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
-            public void onMarkerDragStart(Marker marker) {
+            public void onMarkerDragStart(final Marker marker) {
                 final Marker thisMarker = marker;
                 AlertDialog dialog = new AlertDialog.Builder(MapsActivity.this).create();
                 dialog.setTitle("Remove");
@@ -92,6 +113,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 dialog.setButton(AlertDialog.BUTTON_POSITIVE,"YES", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        deleteRecord(marker.getTitle());
                         thisMarker.remove();
                     }
                 });
@@ -108,6 +130,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+    }
+
+    private void createNewRecord(double lat, double longitude){
+        // Add a new student record
+        ContentValues values = new ContentValues();
+        values.put(LocationsContentProvider.LAT, Double.toString(lat));
+
+        values.put(LocationsContentProvider.LONGITUDE,
+                Double.toString(longitude));
+
+        Uri uri = getContentResolver().insert(
+                LocationsContentProvider.CONTENT_URI, values);
+
+    }
+
+    private void deleteRecord(String id){
+
+        int result = getContentResolver().delete(LocationsContentProvider.CONTENT_URI, "_id=?", new String[]{id});
     }
 
 

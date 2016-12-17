@@ -1,6 +1,9 @@
 package com.udacity.jeremywright.virtualtraveler.adapter;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +14,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.jeremywright.virtualtraveler.R;
+import com.udacity.jeremywright.virtualtraveler.contentprovider.PhotosContentProvider;
 import com.udacity.jeremywright.virtualtraveler.dataobjects.PhotoDO;
 
 import java.util.List;
@@ -29,7 +33,7 @@ public class PhotoGridAdapter extends ArrayAdapter<PhotoDO> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        PhotoDO photo = getItem(position);
+        final PhotoDO photo = getItem(position);
 
         if (convertView == null){
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.photo_grid_item, parent, false);
@@ -42,13 +46,33 @@ public class PhotoGridAdapter extends ArrayAdapter<PhotoDO> {
         photoImageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                //Note: I was originally going to make this a double tap action, but that's against UI guidelines
-                //TODO: add to favorites
-                Toast.makeText(getContext(),"Added to favorites", Toast.LENGTH_SHORT).show();
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, photo.getURL());
+                sendIntent.setType("text/plain");
+                getContext().startActivity(sendIntent);
                 return false;
+            }
+        });
+
+        photoImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Note: I was originally going to make this a double tap action, but that's against UI guidelines
+                createNewRecord(photo.getURL());
+                Toast.makeText(getContext(),"Added to favorites", Toast.LENGTH_SHORT).show();
             }
         });
 
         return convertView;
     }
+    private void createNewRecord(String photoURL){
+        // Add a new student record
+        ContentValues values = new ContentValues();
+        values.put(PhotosContentProvider.PHOTOURL, photoURL);
+
+        Uri uri = getContext().getContentResolver().insert(
+                PhotosContentProvider.CONTENT_URI, values);
+    }
+
 }
