@@ -46,9 +46,9 @@ public class PhotosAsyncTaskLoader extends AsyncTaskLoader<ArrayList<PhotoDO>>{
 
         try{
             //TODO: convert to strings.xml
-            final String BASE_URL = "https://api.flickr.com/services/rest/?method=flickr.photos.search&format=json&nojsoncallback=1";
-
-            String apiKey = "292223080da15057b3f18bb40b3ae16b";
+            String BASE_URL = getContext().getString(R.string.flickr_base_url);
+            
+            String apiKey = getContext().getString(R.string.flickr_api_key);
 
             String photoSearchUrl = BASE_URL+"&api_key="+ apiKey+ "&lat="+latitude+"&lon="+longitude;
             Log.v("ATL", "url:"+photoSearchUrl);
@@ -110,8 +110,8 @@ public class PhotosAsyncTaskLoader extends AsyncTaskLoader<ArrayList<PhotoDO>>{
     private ArrayList<PhotoDO> getPhotosFromJSON(String jsonString) throws  JSONException{
         ArrayList<PhotoDO> photoList = new ArrayList<PhotoDO>();
         JSONObject objectJSON = new JSONObject(jsonString);
-        JSONObject photoJSON = objectJSON.getJSONObject("photos");
-        JSONArray photoArray = photoJSON.getJSONArray("photo");
+        JSONObject photoJSON = objectJSON.getJSONObject(getContext().getString(R.string.photos_key));
+        JSONArray photoArray = photoJSON.getJSONArray(getContext().getString(R.string.photo_key));
 
         //populate the arraylist
         for (int i = 0; i<photoArray.length(); i++){

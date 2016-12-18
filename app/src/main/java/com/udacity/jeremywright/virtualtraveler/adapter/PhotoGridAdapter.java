@@ -62,9 +62,9 @@ public class PhotoGridAdapter extends ArrayAdapter<PhotoDO> {
                 //Note: I was originally going to make this a double tap action, but that's against UI guidelines
                 if (!isFavorites){
                     createNewRecord(photo.getURL());
-                    Toast.makeText(getContext(), "Added to favorites", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.added_fav_text, Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getContext(), "Removed from favorites", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.remove_fav_text, Toast.LENGTH_SHORT).show();
                     remove(photo);
                     removePhoto(photo);
                     notifyDataSetChanged();

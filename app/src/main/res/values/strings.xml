@@ -6,4 +6,23 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="flickr_base_url"><![CDATA[https://api.flickr.com/services/rest/?method=flickr.photos.search&format=json&nojsoncallback=1]]></string>
+    <string name="flickr_api_key">292223080da15057b3f18bb40b3ae16b</string>
+    <string name="photos_key">photos</string>
+    <string name="photo_key">photo</string>
+    <string name="favorites_title">Favorites</string>
+    <string name="added_fav_text">Added to favorites</string>
+    <string name="remove_fav_text">Removed from favorites</string>
+    <string name="photo_provider_url">content://com.udacity.jeremywright.virtualtraveler.contentprovider.PhotosContentProvider</string>
+    <string name="location_provider_url">content://com.udacity.jeremywright.virtualtraveler.contentprovider.LocationsContentProvider</string>
+    <string name="remove_location_title">Remove</string>
+    <string name="remove_location_message">Remove this pin?</string>
+    <string name="no_label">NO</string>
+    <string name="yes_label">YES</string>
+    <string name="pin_added_text">Pin added</string>
+    <string name="location_rationale">Location permission needed to show your current location on map</string>
+    <string name="ok_label">OK</string>
+    <string name="photos_title">Photos</string>
+    <string name="photo_pin_content_desc">Map for selected pin</string>
+
 </resources>

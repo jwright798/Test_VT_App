@@ -40,6 +40,7 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Load
 
     private static final String ARG_LAT = "latitude";
     private static final String ARG_LONG = "longitude";
+    private static final String ARG_PHOTOLIST = "photoList";
     private static final int PHOTO_LOADER = 1;
 
     private MapView mapView;
@@ -93,8 +94,8 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Load
             longitude = getArguments().getDouble(ARG_LONG);
         }
         else{
-            latitude = getActivity().getIntent().getExtras().getDouble("latitude");
-            longitude = getActivity().getIntent().getExtras().getDouble("longitude");
+            latitude = getActivity().getIntent().getExtras().getDouble(ARG_LAT);
+            longitude = getActivity().getIntent().getExtras().getDouble(ARG_LONG);
         }
 
         // Inflate the layout for this fragment
@@ -115,7 +116,7 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Load
             getActivity().getSupportLoaderManager().initLoader(PHOTO_LOADER, loaderArgs, this).forceLoad();
         } else {
             adapter.clear();
-            photoList = savedInstanceState.getParcelableArrayList("photoList");
+            photoList = savedInstanceState.getParcelableArrayList(ARG_PHOTOLIST);
             adapter.addAll(photoList);
             adapter.notifyDataSetChanged();
         }
@@ -131,7 +132,7 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Load
         mapView = (MapView) view.findViewById(R.id.scaled_map);
         if (savedInstanceState != null) {
             //removing this before the mapView onCreate gets called
-            savedInstanceState.remove("photoList");
+            savedInstanceState.remove(ARG_PHOTOLIST);
         }
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
@@ -145,19 +146,8 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Load
         LatLng current = new LatLng(latitude, longitude);
         map.addMarker(new MarkerOptions().position(current));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(current,18.0f));
-        map.setContentDescription("Map for selected pin");
+        map.setContentDescription(getString(R.string.photo_pin_content_desc));
     }
-
-    /*
-    @Override
-    public void photosResponse(ArrayList<PhotoDO> photos) {
-        if (photos != null){
-            adapter.clear();
-            adapter.addAll(photos);
-            photoList=photos;
-            adapter.notifyDataSetChanged();
-        }
-    }*/
 
     @Override
     public Loader<ArrayList<PhotoDO>> onCreateLoader(int id, Bundle args) {
@@ -185,8 +175,8 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Load
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putDouble("longitude", longitude);
-        outState.putDouble("latitude", latitude);
-        outState.putParcelableArrayList("photoList", photoList);
+        outState.putDouble(ARG_LONG, longitude);
+        outState.putDouble(ARG_LAT, latitude);
+        outState.putParcelableArrayList(ARG_PHOTOLIST, photoList);
     }
 }

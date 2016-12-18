@@ -43,6 +43,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private FloatingActionButton fab;
+    private Location mCurrentLocation;
     private Location mLastLocation;
     private SupportMapFragment mapFragment;
     private static final int LOADER_ID =3;
@@ -64,6 +65,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        if (savedInstanceState != null) {
+            mLastLocation = new Location("");
+            mLastLocation.setLatitude(savedInstanceState.getDouble("latitude"));
+            mLastLocation.setLongitude(savedInstanceState.getDouble("longitude"));
+        }
 
         // Create an instance of GoogleAPIClient.
         //https://developer.android.com/training/location/retrieve-current.html
@@ -102,19 +108,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
         mMap.clear();
 
+        //move the camera to the last location
 
+        LatLng curentLoc;
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            curentLoc = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
+            mMap.addMarker(new MarkerOptions().position(curentLoc).draggable(true));
+           // mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curentLoc,16.0f));
+        } else {
+            //no location for some reason, so set a test pin, just to get the flow moving
+            curentLoc = new LatLng(29.4241, -98.4931);
+            mCurrentLocation = new Location("");
+            mCurrentLocation.setLatitude(curentLoc.latitude);
+            mCurrentLocation.setLongitude(curentLoc.longitude);
+            mMap.addMarker(new MarkerOptions().position(curentLoc).draggable(true));
+          //  mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curentLoc,16.0f));
+        }
+        if (mLastLocation != null){
             LatLng lastLoc = new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude());
             mMap.addMarker(new MarkerOptions().position(lastLoc).draggable(true));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLoc,16.0f));
-        } else {
-            //no location for some reason, so set a test pin, just to get the flow moving
-            LatLng sanAntonio = new LatLng(29.4241, -98.4931);
-            mLastLocation = new Location("");
-            mLastLocation.setLatitude(sanAntonio.latitude);
-            mLastLocation.setLongitude(sanAntonio.longitude);
-            mMap.addMarker(new MarkerOptions().position(sanAntonio).draggable(true));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sanAntonio,16.0f));
+        } else{
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curentLoc,16.0f));
         }
 
         getSupportLoaderManager().initLoader(LOADER_ID,null,this);
@@ -124,6 +139,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public boolean onMarkerClick(Marker marker) {
                 //how to get indivitual marker info
                 marker.hideInfoWindow();
+                mLastLocation = new Location("");
+                mLastLocation.setLongitude(marker.getPosition().longitude);
+                mLastLocation.setLatitude(marker.getPosition().latitude);
                 Log.i("VT","Latitude"+Double.toString(marker.getPosition().latitude));
                 Log.i("VT","Longitude"+Double.toString(marker.getPosition().longitude));
                 Intent intent = new Intent(MapsActivity.this, PhotosActivity.class);
@@ -139,7 +157,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onMapLongClick(LatLng latLng) {
                 //Add a new marker
                 mMap.addMarker(new MarkerOptions().position(latLng).draggable(true));
-                Toast.makeText(MapsActivity.this, "Pin added", Toast.LENGTH_SHORT);
+                Toast.makeText(MapsActivity.this, R.string.pin_added_text, Toast.LENGTH_SHORT);
                 createNewRecord(latLng.latitude, latLng.longitude);
             }
         });
@@ -149,15 +167,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onMarkerDragStart(final Marker marker) {
                 final Marker thisMarker = marker;
                 AlertDialog dialog = new AlertDialog.Builder(MapsActivity.this).create();
-                dialog.setTitle("Remove");
-                dialog.setMessage("Remove this pin?");
-                dialog.setButton(AlertDialog.BUTTON_NEGATIVE,"NO", new DialogInterface.OnClickListener() {
+                dialog.setTitle(getString(R.string.remove_location_title));
+                dialog.setMessage(getString(R.string.remove_location_message));
+                dialog.setButton(AlertDialog.BUTTON_NEGATIVE,getString(R.string.no_label), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
                 });
-                dialog.setButton(AlertDialog.BUTTON_POSITIVE,"YES", new DialogInterface.OnClickListener() {
+                dialog.setButton(AlertDialog.BUTTON_POSITIVE,getString(R.string.yes_label), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         deleteRecord(marker.getTitle());
@@ -203,7 +221,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         //insert map pins from ContentProvider
-        String URL = "content://com.udacity.jeremywright.virtualtraveler.contentprovider.LocationsContentProvider";
+        String URL = getString(R.string.location_provider_url);
         return new CursorLoader(this,
                 Uri.parse(URL)
                 , null, null, null, null);
@@ -219,7 +237,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 String tag = data.getString(data.getColumnIndex(LocationsContentProvider._ID));
                 LatLng marker = new LatLng(Double.parseDouble(data.getString(data.getColumnIndex(LocationsContentProvider.LAT))),
                         Double.parseDouble(data.getString(data.getColumnIndex(LocationsContentProvider.LONGITUDE))));
-                mMap.addMarker(new MarkerOptions().position(marker).draggable(true).title(tag));
+                //Don't put a duplicate marker on the map
+                if (mLastLocation != null){
+                    if (marker.latitude == mLastLocation.getLatitude() && marker.longitude == mLastLocation.getLongitude()){
+                        break;
+                    } else{
+                        mMap.addMarker(new MarkerOptions().position(marker).draggable(true).title(tag));
+                    }
+                } else {
+                    mMap.addMarker(new MarkerOptions().position(marker).draggable(true).title(tag));
+                }
             } while (data.moveToNext());
         }
     }
@@ -232,7 +259,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+            mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
                     mGoogleApiClient);
 
            // mMap.setMyLocationEnabled(true);
@@ -259,19 +286,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-                new AlertDialog.Builder(this).setMessage("Location needed to show your current location on map").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                new AlertDialog.Builder(this).setMessage(R.string.location_rationale).setPositiveButton(R.string.ok_label, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ActivityCompat.requestPermissions(MapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERM );
                     }
-                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                }).setNegativeButton(R.string.no_label, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //We don't have permission, so disable location
                         LatLng sanAntonio = new LatLng(29.4241, -98.4931);
-                        mLastLocation = new Location("");
-                        mLastLocation.setLatitude(sanAntonio.latitude);
-                        mLastLocation.setLongitude(sanAntonio.longitude);
+                        mCurrentLocation = new Location("");
+                        mCurrentLocation.setLatitude(sanAntonio.latitude);
+                        mCurrentLocation.setLongitude(sanAntonio.longitude);
                         mapFragment.getMapAsync(MapsActivity.this);
                         dialog.dismiss();
                     }
@@ -281,7 +308,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         } else {
             // We have the permission
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+            mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
                     mGoogleApiClient);
         }
     }
@@ -295,20 +322,29 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //don't need to add check or handle exception since we have permission
-                    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                    mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
                             mGoogleApiClient);
                     mapFragment.getMapAsync(this);
 
                 } else {
                     //we don't have permission, so disable the location functionality
                     LatLng sanAntonio = new LatLng(29.4241, -98.4931);
-                    mLastLocation = new Location("");
-                    mLastLocation.setLatitude(sanAntonio.latitude);
-                    mLastLocation.setLongitude(sanAntonio.longitude);
+                    mCurrentLocation = new Location("");
+                    mCurrentLocation.setLatitude(sanAntonio.latitude);
+                    mCurrentLocation.setLongitude(sanAntonio.longitude);
                     mapFragment.getMapAsync(this);
                 }
                 return;
             }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mLastLocation != null) {
+            outState.putDouble("latitude", mLastLocation.getLatitude());
+            outState.putDouble("longitude", mLastLocation.getLongitude());
         }
     }
 }

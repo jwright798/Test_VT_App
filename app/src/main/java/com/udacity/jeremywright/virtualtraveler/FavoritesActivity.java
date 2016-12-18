@@ -13,7 +13,7 @@ public class FavoritesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
 
-        getSupportActionBar().setTitle("Favorites");
+        getSupportActionBar().setTitle(R.string.favorites_title);
 
         if (savedInstanceState == null){
             FavoritesFragment fragment = new FavoritesFragment();

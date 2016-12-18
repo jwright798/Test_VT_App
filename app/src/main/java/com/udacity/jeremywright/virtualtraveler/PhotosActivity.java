@@ -10,7 +10,7 @@ public class PhotosActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photos);
 
-        getSupportActionBar().setTitle("Photos");
+        getSupportActionBar().setTitle(R.string.photos_title);
 
         if (savedInstanceState == null){
             PhotosFragment fragment = new PhotosFragment();

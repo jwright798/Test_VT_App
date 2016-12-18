@@ -52,21 +52,7 @@ public class FavoritesFragment extends Fragment implements
         gridView.setAdapter(adapter);
 
         if (savedInstanceState == null) {
-            //insert map pins from ContentProvider
-          /*  String URL = "content://com.udacity.jeremywright.virtualtraveler.contentprovider.PhotosContentProvider";
-            Uri photos = Uri.parse(URL);
-            Cursor c = getActivity().managedQuery(photos, null, null, null, null);
-            ArrayList<PhotoDO> displayList = new ArrayList<PhotoDO>();
-            if (c.moveToFirst()) {
-                do{
-                    PhotoDO photo = new PhotoDO(c.getString(c.getColumnIndex(PhotosContentProvider.PHOTOURL)));
-                    displayList.add(photo);
-                } while (c.moveToNext());
-            }
-            adapter.clear();
-            adapter.addAll(displayList);
-            favoritesList = displayList;
-            adapter.notifyDataSetChanged();*/
+            //insert map pins from Loader
             getActivity().getSupportLoaderManager().initLoader(LOADER_ID,null,this);
         } else {
             adapter.clear();
@@ -87,7 +73,7 @@ public class FavoritesFragment extends Fragment implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String URL = "content://com.udacity.jeremywright.virtualtraveler.contentprovider.PhotosContentProvider";
+        String URL = getString(R.string.photo_provider_url);
         return new CursorLoader(getActivity(),
                 Uri.parse(URL)
                 , null, null, null, null);
