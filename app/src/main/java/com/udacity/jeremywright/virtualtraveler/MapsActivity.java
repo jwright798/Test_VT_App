@@ -49,6 +49,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private SupportMapFragment mapFragment;
     private static final int LOADER_ID =3;
     private static final int LOCATION_PERM = 1;
+    private static final String ARG_LAT = "latitude";
+    private static final String ARG_LONG = "longitude";
+    private static final String ARG_ZOOM_LAT = "zoomLatitude";
+    private static final String ARG_ZOOM_LONG = "zoomLongitude";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,15 +71,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey("latitude")) {
+            if (savedInstanceState.containsKey(ARG_LAT)) {
                 mLastLocation = new Location("");
-                mLastLocation.setLatitude(savedInstanceState.getDouble("latitude"));
-                mLastLocation.setLongitude(savedInstanceState.getDouble("longitude"));
+                mLastLocation.setLatitude(savedInstanceState.getDouble(ARG_LAT));
+                mLastLocation.setLongitude(savedInstanceState.getDouble(ARG_LONG));
             }
-            if (savedInstanceState.containsKey("zoomLatitude")) {
+            if (savedInstanceState.containsKey(ARG_ZOOM_LAT)) {
                 mZoomLocation = new Location("");
-                mZoomLocation.setLatitude(savedInstanceState.getDouble("zoomLatitude"));
-                mZoomLocation.setLongitude(savedInstanceState.getDouble("zoomLongitude"));
+                mZoomLocation.setLatitude(savedInstanceState.getDouble(ARG_ZOOM_LAT));
+                mZoomLocation.setLongitude(savedInstanceState.getDouble(ARG_ZOOM_LONG));
             }
         }
 
@@ -157,8 +161,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.i("VT","Latitude"+Double.toString(marker.getPosition().latitude));
                 Log.i("VT","Longitude"+Double.toString(marker.getPosition().longitude));
                 Intent intent = new Intent(MapsActivity.this, PhotosActivity.class);
-                intent.putExtra("latitude",marker.getPosition().latitude);
-                intent.putExtra("longitude",marker.getPosition().longitude);
+                intent.putExtra(ARG_LAT,marker.getPosition().latitude);
+                intent.putExtra(ARG_LONG,marker.getPosition().longitude);
                 startActivity(intent);
                 return false;
             }
@@ -364,12 +368,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mLastLocation != null) {
-            outState.putDouble("latitude", mLastLocation.getLatitude());
-            outState.putDouble("longitude", mLastLocation.getLongitude());
+            outState.putDouble(ARG_LAT, mLastLocation.getLatitude());
+            outState.putDouble(ARG_LONG, mLastLocation.getLongitude());
         }
         if (mZoomLocation != null) {
-            outState.putDouble("zoomLatitude", mZoomLocation.getLatitude());
-            outState.putDouble("zoomLongitude", mZoomLocation.getLongitude());
+            outState.putDouble(ARG_ZOOM_LAT, mZoomLocation.getLatitude());
+            outState.putDouble(ARG_ZOOM_LONG, mZoomLocation.getLongitude());
         }
     }
 }
