@@ -45,6 +45,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FloatingActionButton fab;
     private Location mCurrentLocation;
     private Location mLastLocation;
+    private Location mZoomLocation;
     private SupportMapFragment mapFragment;
     private static final int LOADER_ID =3;
     private static final int LOCATION_PERM = 1;
@@ -70,6 +71,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mLastLocation = new Location("");
                 mLastLocation.setLatitude(savedInstanceState.getDouble("latitude"));
                 mLastLocation.setLongitude(savedInstanceState.getDouble("longitude"));
+            }
+            if (savedInstanceState.containsKey("zoomLatitude")) {
+                mZoomLocation = new Location("");
+                mZoomLocation.setLatitude(savedInstanceState.getDouble("zoomLatitude"));
+                mZoomLocation.setLongitude(savedInstanceState.getDouble("zoomLongitude"));
             }
         }
 
@@ -130,7 +136,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LatLng lastLoc = new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude());
             mMap.addMarker(new MarkerOptions().position(lastLoc).draggable(true));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLoc,16.0f));
-        } else{
+            mLastLocation = null;
+        } else if (mZoomLocation != null){
+            LatLng cameraLatLng = new LatLng(mZoomLocation.getLatitude(), mZoomLocation.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraLatLng,16.0f));
+        } else {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curentLoc,16.0f));
         }
 
@@ -194,6 +204,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
+            }
+        });
+
+        mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+            @Override
+            public void onCameraIdle() {
+                mZoomLocation = new Location("");
+                mZoomLocation.setLatitude(mMap.getCameraPosition().target.latitude);
+                mZoomLocation.setLongitude(mMap.getCameraPosition().target.longitude);
             }
         });
 
@@ -347,6 +366,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (mLastLocation != null) {
             outState.putDouble("latitude", mLastLocation.getLatitude());
             outState.putDouble("longitude", mLastLocation.getLongitude());
+        }
+        if (mZoomLocation != null) {
+            outState.putDouble("zoomLatitude", mZoomLocation.getLatitude());
+            outState.putDouble("zoomLongitude", mZoomLocation.getLongitude());
         }
     }
 }
