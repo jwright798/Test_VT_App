@@ -5,6 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +23,12 @@ import java.util.ArrayList;
  * Created by itg5796 on 12/17/16.
  */
 
-public class FavoritesFragment extends Fragment {
+public class FavoritesFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     private ArrayList<PhotoDO> favoritesList;
     PhotoGridAdapter adapter;
+    private static final int LOADER_ID =2;
 
     public FavoritesFragment() {
         super();
@@ -48,7 +53,7 @@ public class FavoritesFragment extends Fragment {
 
         if (savedInstanceState == null) {
             //insert map pins from ContentProvider
-            String URL = "content://com.udacity.jeremywright.virtualtraveler.contentprovider.PhotosContentProvider";
+          /*  String URL = "content://com.udacity.jeremywright.virtualtraveler.contentprovider.PhotosContentProvider";
             Uri photos = Uri.parse(URL);
             Cursor c = getActivity().managedQuery(photos, null, null, null, null);
             ArrayList<PhotoDO> displayList = new ArrayList<PhotoDO>();
@@ -61,7 +66,8 @@ public class FavoritesFragment extends Fragment {
             adapter.clear();
             adapter.addAll(displayList);
             favoritesList = displayList;
-            adapter.notifyDataSetChanged();
+            adapter.notifyDataSetChanged();*/
+            getActivity().getSupportLoaderManager().initLoader(LOADER_ID,null,this);
         } else {
             adapter.clear();
             favoritesList = savedInstanceState.getParcelableArrayList("favoritesList");
@@ -77,5 +83,35 @@ public class FavoritesFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("favoritesList", favoritesList);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String URL = "content://com.udacity.jeremywright.virtualtraveler.contentprovider.PhotosContentProvider";
+        return new CursorLoader(getActivity(),
+                Uri.parse(URL)
+                , null, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        ArrayList<PhotoDO> displayList = new ArrayList<PhotoDO>();
+        if (data.moveToFirst()) {
+            do{
+                PhotoDO photo = new PhotoDO(data.getString(data.getColumnIndex(PhotosContentProvider.PHOTOURL)));
+                displayList.add(photo);
+            } while (data.moveToNext());
+        }
+        adapter.clear();
+        adapter.addAll(displayList);
+        favoritesList = displayList;
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        favoritesList = new ArrayList<PhotoDO>();
+        adapter.clear();
+        adapter.notifyDataSetChanged();
     }
 }

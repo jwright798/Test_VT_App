@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,10 +36,11 @@ import java.util.ArrayList;
  * Use the {@link PhotosFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PhotosFragment extends Fragment implements OnMapReadyCallback, PhotoServiceHelper.PhotoServiceDelegate {
+public class PhotosFragment extends Fragment implements OnMapReadyCallback, LoaderManager.LoaderCallbacks {
 
     private static final String ARG_LAT = "latitude";
     private static final String ARG_LONG = "longitude";
+    private static final int PHOTO_LOADER = 1;
 
     private MapView mapView;
     private GoogleMap map;
@@ -76,7 +79,7 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Phot
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        serviceHelper.setPhotoServiceDelegate(this);
+       // serviceHelper.setPhotoServiceDelegate(this);
 
     }
 
@@ -106,14 +109,16 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Phot
         gridView.setAdapter(adapter);
 
         if (savedInstanceState == null) {
-            serviceHelper.getPhotos(latitude, longitude);
+            Bundle loaderArgs = new Bundle();
+            loaderArgs.putString(ARG_LAT, Double.toString(latitude));
+            loaderArgs.putString(ARG_LONG, Double.toString(longitude));
+            getActivity().getSupportLoaderManager().initLoader(PHOTO_LOADER, loaderArgs, this).forceLoad();
         } else {
             adapter.clear();
             photoList = savedInstanceState.getParcelableArrayList("photoList");
             adapter.addAll(photoList);
             adapter.notifyDataSetChanged();
         }
-        //serviceHelper.getPhotos(latitude, longitude);
 
         return photoView;
     }
@@ -136,12 +141,14 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Phot
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
+        map.getUiSettings().setAllGesturesEnabled(false);
         LatLng current = new LatLng(latitude, longitude);
         map.addMarker(new MarkerOptions().position(current));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(current,18.0f));
         map.setContentDescription("Map for selected pin");
     }
 
+    /*
     @Override
     public void photosResponse(ArrayList<PhotoDO> photos) {
         if (photos != null){
@@ -150,6 +157,29 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Phot
             photoList=photos;
             adapter.notifyDataSetChanged();
         }
+    }*/
+
+    @Override
+    public Loader<ArrayList<PhotoDO>> onCreateLoader(int id, Bundle args) {
+        String testLat = args.getString(ARG_LAT);
+        String testLong = args.getString(ARG_LONG);
+        return new PhotosAsyncTaskLoader(getActivity(), args.getString(ARG_LAT), args.getString(ARG_LONG));
+    }
+
+    @Override
+    public void onLoadFinished(Loader loader, Object data) {
+        photoList = (ArrayList<PhotoDO>) data;
+        adapter.clear();
+        adapter.addAll((ArrayList<PhotoDO>) data);
+        adapter.notifyDataSetChanged();
+    }
+
+
+    @Override
+    public void onLoaderReset(Loader loader) {
+        photoList = new ArrayList<PhotoDO>();
+        adapter.clear();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
