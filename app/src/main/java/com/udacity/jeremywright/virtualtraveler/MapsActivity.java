@@ -66,9 +66,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         if (savedInstanceState != null) {
-            mLastLocation = new Location("");
-            mLastLocation.setLatitude(savedInstanceState.getDouble("latitude"));
-            mLastLocation.setLongitude(savedInstanceState.getDouble("longitude"));
+            if (savedInstanceState.containsKey("latitude")) {
+                mLastLocation = new Location("");
+                mLastLocation.setLatitude(savedInstanceState.getDouble("latitude"));
+                mLastLocation.setLongitude(savedInstanceState.getDouble("longitude"));
+            }
         }
 
         // Create an instance of GoogleAPIClient.
