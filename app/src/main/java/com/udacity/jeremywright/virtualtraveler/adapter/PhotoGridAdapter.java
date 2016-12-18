@@ -2,8 +2,10 @@ package com.udacity.jeremywright.virtualtraveler.adapter;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,10 +66,22 @@ public class PhotoGridAdapter extends ArrayAdapter<PhotoDO> {
                     createNewRecord(photo.getURL());
                     Toast.makeText(getContext(), R.string.added_fav_text, Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getContext(), R.string.remove_fav_text, Toast.LENGTH_SHORT).show();
-                    remove(photo);
-                    removePhoto(photo);
-                    notifyDataSetChanged();
+                    AlertDialog dialog = new AlertDialog.Builder(getContext()).create();
+                    dialog.setTitle(getContext().getString(R.string.remove_fav_title));
+                    dialog.setMessage(getContext().getString(R.string.remove_fav_message));
+                    dialog.setButton(AlertDialog.BUTTON_NEGATIVE,getContext().getString(R.string.no_label), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.setButton(AlertDialog.BUTTON_POSITIVE,getContext().getString(R.string.yes_label), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            removePhoto(photo);
+                        }
+                    });
+                    dialog.show();
                 }
             }
         });
@@ -88,6 +102,11 @@ public class PhotoGridAdapter extends ArrayAdapter<PhotoDO> {
         int result = getContext().getContentResolver().delete(PhotosContentProvider.CONTENT_URI, "photoURL=?", new String[]{photoURL});
         if (result == 0){
             Log.e("VT", "error deleting photo");
+        } else {
+            //delete was successful
+            Toast.makeText(getContext(), R.string.remove_fav_text, Toast.LENGTH_SHORT).show();
+            remove(photoDO);
+            notifyDataSetChanged();
         }
     }
 

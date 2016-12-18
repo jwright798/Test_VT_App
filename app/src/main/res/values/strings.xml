@@ -24,5 +24,7 @@
     <string name="ok_label">OK</string>
     <string name="photos_title">Photos</string>
     <string name="photo_pin_content_desc">Map for selected pin</string>
+    <string name="remove_fav_title">Remove Photo</string>
+    <string name="remove_fav_message">Are you sure you want to remove this photo from your favorites?</string>
 
 </resources>
