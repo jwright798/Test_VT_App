@@ -4,7 +4,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="appwidget_text">EXAMPLE</string>
+    <string name="appwidget_text">You have no favorite photos</string>
     <string name="add_widget">Add widget</string>
     <string name="flickr_base_url"><![CDATA[https://api.flickr.com/services/rest/?method=flickr.photos.search&format=json&nojsoncallback=1]]></string>
     <string name="flickr_api_key">292223080da15057b3f18bb40b3ae16b</string>
