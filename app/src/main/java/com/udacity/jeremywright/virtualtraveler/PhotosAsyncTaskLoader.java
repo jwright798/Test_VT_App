@@ -45,7 +45,6 @@ public class PhotosAsyncTaskLoader extends AsyncTaskLoader<ArrayList<PhotoDO>>{
         String photoJSONString = null;
 
         try{
-            //TODO: convert to strings.xml
             String BASE_URL = getContext().getString(R.string.flickr_base_url);
             
             String apiKey = getContext().getString(R.string.flickr_api_key);

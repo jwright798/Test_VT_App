@@ -10,15 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -31,8 +26,6 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PhotosFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
  * Use the {@link PhotosFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
@@ -50,7 +43,6 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Load
     private double latitude;
     private double longitude;
 
-    private PhotoServiceHelper serviceHelper = new PhotoServiceHelper();
     private ArrayList<PhotoDO> photoList;
 
 
@@ -64,8 +56,8 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Load
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param latitude Parameter 1.
-     * @param longitude Parameter 2.
+     * @param "latitude" Parameter 1.
+     * @param "longitude" Parameter 2.
      * @return A new instance of fragment PhotosFragment.
      */
     public static PhotosFragment newInstance(double param1, double param2) {

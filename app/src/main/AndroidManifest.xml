@@ -46,9 +46,10 @@
             android:authorities="com.udacity.jeremywright.virtualtraveler.contentprovider.LocationsContentProvider" />
         <provider
             android:name=".contentprovider.PhotosContentProvider"
-            android:authorities="com.udacity.jeremywright.virtualtraveler.contentprovider.PhotosContentProvider" />
+            android:authorities="com.udacity.jeremywright.virtualtraveler.contentprovider.PhotosContentProvider"
+            android:exported="true"/>
 
-        <receiver android:name=".FavoritesWidget">
+        <receiver android:name=".widget.FavoritesWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -57,6 +58,10 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/favorites_widget_info" />
         </receiver>
+
+        <service android:name=".widget.FavoritesWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            android:exported="true" />
     </application>
 
 </manifest>
