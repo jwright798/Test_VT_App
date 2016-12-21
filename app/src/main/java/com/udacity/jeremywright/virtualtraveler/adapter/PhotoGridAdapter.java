@@ -1,5 +1,6 @@
 package com.udacity.jeremywright.virtualtraveler.adapter;
 
+import android.appwidget.AppWidgetManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,6 +19,7 @@ import com.squareup.picasso.Picasso;
 import com.udacity.jeremywright.virtualtraveler.R;
 import com.udacity.jeremywright.virtualtraveler.contentprovider.PhotosContentProvider;
 import com.udacity.jeremywright.virtualtraveler.dataobjects.PhotoDO;
+import com.udacity.jeremywright.virtualtraveler.widget.FavoritesWidget;
 
 import java.util.List;
 
@@ -89,12 +91,21 @@ public class PhotoGridAdapter extends ArrayAdapter<PhotoDO> {
         return convertView;
     }
     private void createNewRecord(String photoURL){
-        // Add a new student record
+        // Add a new photo record
         ContentValues values = new ContentValues();
         values.put(PhotosContentProvider.PHOTOURL, photoURL);
 
         Uri uri = getContext().getContentResolver().insert(
                 PhotosContentProvider.CONTENT_URI, values);
+
+        //http://stackoverflow.com/questions/3455123/programmatically-update-widget-from-activity-service-receiver
+        Intent intent = new Intent(getContext(),FavoritesWidget.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
+        // since it seems the onUpdate() is only fired on that:
+        int[] ids = {R.xml.favorites_widget_info};
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+        getContext().sendBroadcast(intent);
     }
 
     private void removePhoto (PhotoDO photoDO) {
@@ -105,6 +116,16 @@ public class PhotoGridAdapter extends ArrayAdapter<PhotoDO> {
         } else {
             //delete was successful
             Toast.makeText(getContext(), R.string.remove_fav_text, Toast.LENGTH_SHORT).show();
+            //http://stackoverflow.com/questions/3455123/programmatically-update-widget-from-activity-service-receiver
+            Intent intent = new Intent(getContext(),FavoritesWidget.class);
+            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
+            // since it seems the onUpdate() is only fired on that:
+            int[] ids = {R.xml.favorites_widget_info};
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+            getContext().sendBroadcast(intent);
+
+            //remove from db and update view
             remove(photoDO);
             notifyDataSetChanged();
         }

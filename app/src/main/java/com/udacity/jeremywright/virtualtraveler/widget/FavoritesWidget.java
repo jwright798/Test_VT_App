@@ -2,6 +2,7 @@ package com.udacity.jeremywright.virtualtraveler.widget;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
@@ -32,6 +33,12 @@ public class FavoritesWidget extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        final String action = intent.getAction();
+        if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
+             final AppWidgetManager mgr = AppWidgetManager.getInstance(context);
+             final ComponentName cn = new ComponentName(context, FavoritesWidget.class);
+             mgr.notifyAppWidgetViewDataChanged(mgr.getAppWidgetIds(cn), R.id.widget_grid_view);
+        }
         super.onReceive(context, intent);
     }
 
