@@ -7,7 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by itg5796 on 12/14/16.
+ * Created by jeremywright on 12/14/16.
  */
 
 public class PhotoDO implements Parcelable {

@@ -19,7 +19,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- * Created by itg5796 on 12/17/16.
+ * Created by jeremywright on 12/17/16.
  */
 
 public class PhotosAsyncTaskLoader extends AsyncTaskLoader<ArrayList<PhotoDO>>{

@@ -20,7 +20,7 @@ import com.udacity.jeremywright.virtualtraveler.dataobjects.PhotoDO;
 import java.util.ArrayList;
 
 /**
- * Created by itg5796 on 12/17/16.
+ * Created by jeremywright on 12/17/16.
  */
 
 public class FavoritesFragment extends Fragment implements

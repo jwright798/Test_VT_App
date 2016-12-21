@@ -24,7 +24,7 @@ import com.udacity.jeremywright.virtualtraveler.widget.FavoritesWidget;
 import java.util.List;
 
 /**
- * Created by itg5796 on 12/13/16.
+ * Created by jeremywright on 12/13/16.
  */
 
 public class PhotoGridAdapter extends ArrayAdapter<PhotoDO> {
