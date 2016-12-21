@@ -106,6 +106,7 @@ public class PhotosAsyncTaskLoader extends AsyncTaskLoader<ArrayList<PhotoDO>>{
         return null;
     }
 
+    //Rather than a bunch of nested null checks, throwing a JSONException and returning null is the best option
     private ArrayList<PhotoDO> getPhotosFromJSON(String jsonString) throws  JSONException{
         ArrayList<PhotoDO> photoList = new ArrayList<PhotoDO>();
         JSONObject objectJSON = new JSONObject(jsonString);

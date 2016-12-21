@@ -37,15 +37,25 @@ import com.udacity.jeremywright.virtualtraveler.contentprovider.LocationsContent
 
 import java.util.Map;
 
+
+//For this MapActivity, I do some special logic to make the map work how I want and depeding on if you have location enabled
+// or are coming from a photo page.
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, LoaderManager.LoaderCallbacks<Cursor>,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private FloatingActionButton fab;
+
+    //mCurrentLocation is the users current location, which is set to the location(if enabled) or San Antonio by default
     private Location mCurrentLocation;
+
+    //This is the last location before leaving the page
     private Location mLastLocation;
+
+    //This is a hack for figuring out where the user was on the map when they left the page if no pin was selected
     private Location mZoomLocation;
+
     private SupportMapFragment mapFragment;
     private static final int LOADER_ID =3;
     private static final int LOCATION_PERM = 1;
@@ -61,6 +71,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+
+        //Using a FAB to access favorite photos
         fab = (FloatingActionButton) findViewById(R.id.map_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,7 +138,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             curentLoc = new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
             mMap.addMarker(new MarkerOptions().position(curentLoc).draggable(true));
-           // mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curentLoc,16.0f));
+
         } else {
             //no location for some reason, so set a test pin, just to get the flow moving
             curentLoc = new LatLng(29.4241, -98.4931);
@@ -134,8 +146,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mCurrentLocation.setLatitude(curentLoc.latitude);
             mCurrentLocation.setLongitude(curentLoc.longitude);
             mMap.addMarker(new MarkerOptions().position(curentLoc).draggable(true));
-          //  mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curentLoc,16.0f));
+
         }
+
+        //Figure out where we are moving the camera to
         if (mLastLocation != null){
             LatLng lastLoc = new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude());
             mMap.addMarker(new MarkerOptions().position(lastLoc).draggable(true));
@@ -148,8 +162,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curentLoc,16.0f));
         }
 
+        //Go get the set pins from the DB
         getSupportLoaderManager().initLoader(LOADER_ID,null,this);
 
+        //Transition to the photos view
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -158,8 +174,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mLastLocation = new Location("");
                 mLastLocation.setLongitude(marker.getPosition().longitude);
                 mLastLocation.setLatitude(marker.getPosition().latitude);
-                Log.i("VT","Latitude"+Double.toString(marker.getPosition().latitude));
-                Log.i("VT","Longitude"+Double.toString(marker.getPosition().longitude));
+
+                //Transition
                 Intent intent = new Intent(MapsActivity.this, PhotosActivity.class);
                 intent.putExtra(ARG_LAT,marker.getPosition().latitude);
                 intent.putExtra(ARG_LONG,marker.getPosition().longitude);
@@ -178,7 +194,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        //There was no tap and hold option for map pins...so I'm using the drag listener
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+
+            //Give the use the option before removing the pin
             @Override
             public void onMarkerDragStart(final Marker marker) {
                 final Marker thisMarker = marker;
@@ -211,6 +230,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        //Update the zoom location incase the user goes to favorites and comes back
         mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
             public void onCameraIdle() {
@@ -223,7 +243,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void createNewRecord(double lat, double longitude){
-        // Add a new student record
+        // Add a new location record
         ContentValues values = new ContentValues();
         values.put(LocationsContentProvider.LAT, Double.toString(lat));
 
@@ -255,10 +275,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
+        //Cycle through locations and add markers to the map
         if (data.moveToFirst()) {
             do{
-                double testLat = Double.parseDouble(data.getString(data.getColumnIndex(LocationsContentProvider.LAT)));
-                double testLong = Double.parseDouble(data.getString(data.getColumnIndex(LocationsContentProvider.LONGITUDE)));
                 String tag = data.getString(data.getColumnIndex(LocationsContentProvider._ID));
                 LatLng marker = new LatLng(Double.parseDouble(data.getString(data.getColumnIndex(LocationsContentProvider.LAT))),
                         Double.parseDouble(data.getString(data.getColumnIndex(LocationsContentProvider.LONGITUDE))));
@@ -281,13 +300,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.clear();
     }
 
+    //Handling the multiple threads by setting up the map after we figure out our permission situation
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
                     mGoogleApiClient);
 
-           // mMap.setMyLocationEnabled(true);
             mapFragment.getMapAsync(this);
         } else {
             checkForLocationPermission();

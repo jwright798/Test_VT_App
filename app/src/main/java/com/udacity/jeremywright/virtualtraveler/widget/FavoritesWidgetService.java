@@ -16,8 +16,6 @@ import com.udacity.jeremywright.virtualtraveler.contentprovider.PhotosContentPro
 import com.udacity.jeremywright.virtualtraveler.dataobjects.PhotoDO;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Jeremy Wright on 12/20/16.
@@ -29,21 +27,20 @@ public class FavoritesWidgetService extends RemoteViewsService {
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new StackRemoteViewsFactory(this.getApplicationContext(), intent, FavoritesWidgetService.this.getContentResolver());
+        return new GridRemoteViewsFactory(this.getApplicationContext(), intent, FavoritesWidgetService.this.getContentResolver());
     }
 
 
 }
 
-class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
+class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private Context mContext;
     private int defaultCount = 0;
     private Cursor mCursor;
     private ContentResolver mContentResolver;
-    private List<PhotoDO> mWidgetItems = new ArrayList<PhotoDO>();
 
-    public StackRemoteViewsFactory(Context context, Intent intent, ContentResolver resolver) {
+    public GridRemoteViewsFactory(Context context, Intent intent, ContentResolver resolver) {
         mContext = context;
         mContentResolver = resolver;
     }

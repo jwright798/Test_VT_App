@@ -11,11 +11,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.util.Log;
 
 import java.util.HashMap;
 
+//Used this as a reference and example https://www.tutorialspoint.com/android/android_content_providers.htm
 public class PhotosContentProvider extends ContentProvider {
+
+    //No references to strings.xml here so I have to hardcode these
     static final String PROVIDER_NAME = "com.udacity.jeremywright.virtualtraveler.contentprovider.PhotosContentProvider";
     static final String URL = "content://" + PROVIDER_NAME + "/photos";
     public static final Uri CONTENT_URI = Uri.parse(URL);
@@ -96,7 +98,6 @@ public class PhotosContentProvider extends ContentProvider {
         if (rowID > 0) {
             Uri _uri = ContentUris.withAppendedId(CONTENT_URI, rowID);
             getContext().getContentResolver().notifyChange(_uri, null);
-            Log.i("PCP", "successfully inserted row into DB");
             return _uri;
         }
 

@@ -72,8 +72,6 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Load
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // serviceHelper.setPhotoServiceDelegate(this);
-
     }
 
     @Override
@@ -150,9 +148,14 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Load
 
     @Override
     public void onLoadFinished(Loader loader, Object data) {
-        photoList = (ArrayList<PhotoDO>) data;
+        if (data != null) {
+            photoList = (ArrayList<PhotoDO>) data;
+
+        } else {
+            photoList = new ArrayList<PhotoDO>();
+        }
         adapter.clear();
-        adapter.addAll((ArrayList<PhotoDO>) data);
+        adapter.addAll(photoList);
         adapter.notifyDataSetChanged();
     }
 

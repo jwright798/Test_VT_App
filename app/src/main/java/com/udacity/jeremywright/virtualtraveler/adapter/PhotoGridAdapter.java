@@ -29,6 +29,7 @@ import java.util.List;
 
 public class PhotoGridAdapter extends ArrayAdapter<PhotoDO> {
 
+    //Gonna reuse the adapter for favorites and regular photos view
     private boolean isFavorites;
     public PhotoGridAdapter(Context context, List<PhotoDO> photoDOs, boolean isFavorites) {
         super(context, 0, photoDOs);
@@ -45,9 +46,11 @@ public class PhotoGridAdapter extends ArrayAdapter<PhotoDO> {
         }
 
         ImageView photoImageView = (ImageView)convertView.findViewById(R.id.grid_image_view);
-        Log.v("photo", photo.getURL());
+
+        //Picasso = AWESOME
         Picasso.with(getContext()).load(photo.getURL()).into(photoImageView);
 
+        //Share the current photo url when you long press a photo
         photoImageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -60,6 +63,7 @@ public class PhotoGridAdapter extends ArrayAdapter<PhotoDO> {
             }
         });
 
+        //Add or remove the photo from favorites depending on where you are
         photoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

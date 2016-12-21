@@ -30,7 +30,7 @@ public class FavoritesWidget extends AppWidgetProvider {
         super.onUpdate(context,appWidgetManager, appWidgetIds);
     }
 
-
+    //This is how I'm updating my widget from the app
     @Override
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
