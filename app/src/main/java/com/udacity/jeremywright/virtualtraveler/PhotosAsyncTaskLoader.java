@@ -53,7 +53,7 @@ public class PhotosAsyncTaskLoader extends AsyncTaskLoader<ArrayList<PhotoDO>>{
             String apiKey = getContext().getString(R.string.flickr_api_key);
 
             if (apiKey.isEmpty()){
-                Toast.makeText(getContext(), "API Key is empty", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.empty_api_key_text, Toast.LENGTH_SHORT).show();
             }
 
             String photoSearchUrl = BASE_URL+"&api_key="+ apiKey+ "&lat="+latitude+"&lon="+longitude;
