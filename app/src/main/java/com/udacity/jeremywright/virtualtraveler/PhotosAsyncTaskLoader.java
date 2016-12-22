@@ -3,7 +3,6 @@ package com.udacity.jeremywright.virtualtraveler;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.udacity.jeremywright.virtualtraveler.dataobjects.PhotoDO;
 
@@ -29,6 +28,7 @@ public class PhotosAsyncTaskLoader extends AsyncTaskLoader<ArrayList<PhotoDO>>{
 
     private String latitude;
     private String longitude;
+    private Context context;
 
     public PhotosAsyncTaskLoader(Context context) {
         super(context);
@@ -36,6 +36,7 @@ public class PhotosAsyncTaskLoader extends AsyncTaskLoader<ArrayList<PhotoDO>>{
 
     public PhotosAsyncTaskLoader(Context context, String lat, String longitude){
         super(context);
+        this.context = context;
         this.latitude = lat;
         this.longitude = longitude;
     }
@@ -53,7 +54,7 @@ public class PhotosAsyncTaskLoader extends AsyncTaskLoader<ArrayList<PhotoDO>>{
             String apiKey = getContext().getString(R.string.flickr_api_key);
 
             if (apiKey.isEmpty()){
-                Toast.makeText(getContext(), R.string.empty_api_key_text, Toast.LENGTH_SHORT).show();
+                return null;
             }
 
             String photoSearchUrl = BASE_URL+"&api_key="+ apiKey+ "&lat="+latitude+"&lon="+longitude;

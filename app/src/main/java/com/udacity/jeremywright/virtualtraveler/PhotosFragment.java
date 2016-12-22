@@ -1,11 +1,13 @@
 package com.udacity.jeremywright.virtualtraveler;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -109,6 +111,20 @@ public class PhotosFragment extends Fragment implements OnMapReadyCallback, Load
             photoList = savedInstanceState.getParcelableArrayList(ARG_PHOTOLIST);
             adapter.addAll(photoList);
             adapter.notifyDataSetChanged();
+        }
+
+        String apiKey = getActivity().getString(R.string.flickr_api_key);
+        if (apiKey.isEmpty()){
+            AlertDialog dialog = new AlertDialog.Builder(getContext()).create();
+            dialog.setTitle("");
+            dialog.setMessage(getActivity().getString(R.string.empty_api_key_text));
+            dialog.setButton(AlertDialog.BUTTON_NEUTRAL,getContext().getString(R.string.ok_button_text), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
         }
 
         return photoView;
