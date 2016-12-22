@@ -28,6 +28,7 @@ public class FavoritesFragment extends Fragment implements
 
     private ArrayList<PhotoDO> favoritesList;
     PhotoGridAdapter adapter;
+    //Generic loader id
     private static final int LOADER_ID =2;
 
     public FavoritesFragment() {
@@ -52,7 +53,7 @@ public class FavoritesFragment extends Fragment implements
         gridView.setAdapter(adapter);
 
         if (savedInstanceState == null) {
-            //insert map pins from Loader
+            //get favorite photos from Loader
             getActivity().getSupportLoaderManager().initLoader(LOADER_ID,null,this);
         } else {
             adapter.clear();

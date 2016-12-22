@@ -14,7 +14,7 @@ import android.net.Uri;
 
 import java.util.HashMap;
 
-//Used this as a reference and example https://www.tutorialspoint.com/android/android_content_providers.htm
+//Used the Udacity course and this as a reference and example https://www.tutorialspoint.com/android/android_content_providers.htm
 public class PhotosContentProvider extends ContentProvider {
 
     //No references to strings.xml here so I have to hardcode these

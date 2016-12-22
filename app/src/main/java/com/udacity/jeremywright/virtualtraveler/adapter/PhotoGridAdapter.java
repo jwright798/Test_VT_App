@@ -105,8 +105,6 @@ public class PhotoGridAdapter extends ArrayAdapter<PhotoDO> {
         //http://stackoverflow.com/questions/3455123/programmatically-update-widget-from-activity-service-receiver
         Intent intent = new Intent(getContext(),FavoritesWidget.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
-        // since it seems the onUpdate() is only fired on that:
         int[] ids = {R.xml.favorites_widget_info};
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
         getContext().sendBroadcast(intent);
@@ -120,11 +118,10 @@ public class PhotoGridAdapter extends ArrayAdapter<PhotoDO> {
         } else {
             //delete was successful
             Toast.makeText(getContext(), R.string.remove_fav_text, Toast.LENGTH_SHORT).show();
+
             //http://stackoverflow.com/questions/3455123/programmatically-update-widget-from-activity-service-receiver
             Intent intent = new Intent(getContext(),FavoritesWidget.class);
             intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
-            // since it seems the onUpdate() is only fired on that:
             int[] ids = {R.xml.favorites_widget_info};
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
             getContext().sendBroadcast(intent);

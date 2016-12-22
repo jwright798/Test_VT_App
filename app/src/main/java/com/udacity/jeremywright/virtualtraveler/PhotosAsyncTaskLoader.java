@@ -22,6 +22,8 @@ import java.util.ArrayList;
  * Created by jeremywright on 12/17/16.
  */
 
+//Using this as a combination of an AsyncTask and Loader
+
 public class PhotosAsyncTaskLoader extends AsyncTaskLoader<ArrayList<PhotoDO>>{
 
     private String latitude;
