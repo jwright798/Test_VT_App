@@ -4,7 +4,7 @@
     <string name="appwidget_text">You have no favorite photos</string>
     <string name="add_widget">Add widget</string>
     <string name="flickr_base_url"><![CDATA[https://api.flickr.com/services/rest/?method=flickr.photos.search&format=json&nojsoncallback=1]]></string>
-    <string name="flickr_api_key">292223080da15057b3f18bb40b3ae16b</string>
+    <string name="flickr_api_key"></string>
     <string name="photos_key">photos</string>
     <string name="photo_key">photo</string>
     <string name="favorites_title">Favorites</string>

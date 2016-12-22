@@ -3,6 +3,7 @@ package com.udacity.jeremywright.virtualtraveler;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.udacity.jeremywright.virtualtraveler.dataobjects.PhotoDO;
 
@@ -50,6 +51,10 @@ public class PhotosAsyncTaskLoader extends AsyncTaskLoader<ArrayList<PhotoDO>>{
             String BASE_URL = getContext().getString(R.string.flickr_base_url);
             
             String apiKey = getContext().getString(R.string.flickr_api_key);
+
+            if (apiKey.isEmpty()){
+                Toast.makeText(getContext(), "API Key is empty", Toast.LENGTH_SHORT).show();
+            }
 
             String photoSearchUrl = BASE_URL+"&api_key="+ apiKey+ "&lat="+latitude+"&lon="+longitude;
             Log.v("ATL", "url:"+photoSearchUrl);

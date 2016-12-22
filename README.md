@@ -1,5 +1,9 @@
 # Virtual Traveler
 
+### IMPORTANT!!!!!!!
+### TO RUN THIS APP YOU NEED A FLICKR API KEY, IN ORDER TO GET THIS ONE FOLLOW THIS LINK AND REGISTER
+### https://www.flickr.com/services/apps/create/
+
 Be the ultimate couch explorer. With the Virtual Traveler app, you can navigate the globe and view fantastic photos from Flickr users all over the world. Search for pictures from your current location, or search for that perfect destination. You can save your favorite pictures and view them from your home screen with the Virtual Traveler widget. Perfect for planning your photography tour, or getting the lay of the land before your next vacation. 
 
 Go explore today!
